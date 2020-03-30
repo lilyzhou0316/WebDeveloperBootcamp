@@ -1,7 +1,7 @@
 /*
  * @Author: Xiaoli Zhou
  * @Date: 2020-03-25 22:24:00
- * @LastEditTime: 2020-03-28 23:23:01
+ * @LastEditTime: 2020-03-29 23:19:02
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /RGBRecognizerApp/colorGame.js
@@ -15,75 +15,69 @@
 //     "rgb(255, 0, 255)"
 // ];
 
-var squares = document.querySelectorAll(".square");
-var colors = generateRandomColorArr(squares.length);
-var pickedColor = pickColor(colors);
+var numOfSquares = 6;
+var colors = [];
+var pickedColor;
 var colordisplay = document.querySelector("#colorDisplay");
-colordisplay.textContent = pickedColor;
 var messageDisplay = document.querySelector("#display");
 var h1 = document.querySelector("h1");
 var resetButton = document.querySelector("#reset");
-var easyButton = document.querySelector("#easy");
-var hardButton = document.querySelector("#hard");
-var numOfSquares = 6;
+var buttonList = document.querySelectorAll(".mode");
+var squares = document.querySelectorAll(".square");
 
-resetButton.addEventListener("click", function() {
-  //according to the current square number to reset color
-  resetSquaresColor(numOfSquares);
-  h1.style.backgroundColor = "steelblue"; //body color
-});
+init();
 
-easyButton.addEventListener("click", function() {
-  //reset the number of squares
-  numOfSquares = 3;
-  //remove selected class from hard button
-  hardButton.classList.remove("selected");
-  //add selected class to easy button
-  easyButton.classList.add("selected");
-  //reset the color of squares
-  resetSquaresColor(numOfSquares);
-  //hide 3 squares of the second row
-  for (var i = 3; i < 6; i++) {
-    document.querySelectorAll(".square")[i].style.display = "none";
-  }
-});
+function init() {
+  //mode buttons event listener
+  setupModeButton();
 
-hardButton.addEventListener("click", function() {
-  //reset the number of squares
-  numOfSquares = 6;
-  //add selected class to hard button
-  hardButton.classList.add("selected");
-  //remove selected class from easy button
-  easyButton.classList.remove("selected");
-  //reset the color of squares
-  resetSquaresColor(numOfSquares);
-  //display the squares that has been hidden
-  for (var i = 3; i < 6; i++) {
-    document.querySelectorAll(".square")[i].style.display = "block";
-  }
-});
+  //squares event listener
+  setupSquaresEvent();
 
-for (var i = 0; i < squares.length; i++) {
-  //add initial colors to squares
-  squares[i].style.backgroundColor = colors[i];
-
-  //add click event listeners to squares
-  squares[i].addEventListener("click", function() {
-    //grab color of clicked square
-    var currentColor = this.style.backgroundColor;
-    //compare it to the picked color
-    if (currentColor === pickedColor) {
-      messageDisplay.textContent = "correct!";
-      changeColors(currentColor);
-      h1.style.backgroundColor = pickedColor;
-      resetButton.textContent = "Play Again?";
-    } else {
-      //change the current square's color to black
-      this.style.backgroundColor = "#232323";
-      messageDisplay.textContent = "try again!";
-    }
-  });
+  //reset all colors
+  resetSquaresColor();
 }
+
+function setupModeButton() {
+  for (var i = 0; i < buttonList.length; i++) {
+    buttonList[i].addEventListener("click", function () {
+      //remove all buttons' class of selected,
+      buttonList[0].classList.remove("selected");
+      buttonList[1].classList.remove("selected");
+      //add class selected to the current button
+      this.classList.add("selected");
+      //figure out how many squares to show 
+      this.textContent === "Easy" ? numOfSquares = 3 : numOfSquares = 6;
+      //reset new colors, pick a new pickedColor
+      resetSquaresColor(numOfSquares);
+    })
+  };
+}
+
+function setupSquaresEvent() {
+  for (var i = 0; i < squares.length; i++) {
+    //add click event listeners to squares
+    squares[i].addEventListener("click", function () {
+      //grab color of clicked square
+      var currentColor = this.style.backgroundColor;
+      //compare it to the picked color
+      if (currentColor === pickedColor) {
+        messageDisplay.textContent = "correct!";
+        changeColors(currentColor);
+        h1.style.backgroundColor = pickedColor;
+        resetButton.textContent = "Play Again?";
+      } else {
+        //change the current square's color to black
+        this.style.backgroundColor = "#232323";
+        messageDisplay.textContent = "try again!";
+      }
+    });
+  }
+}
+resetButton.addEventListener("click", function () {
+  resetSquaresColor(numOfSquares);
+});
+
 
 function changeColors(color) {
   for (var i = 0; i < squares.length; i++) {
@@ -120,15 +114,28 @@ function generateRandomColorArr(num) {
   //return the array
   return arr;
 }
-function resetSquaresColor(num) {
+
+function resetSquaresColor() {
   //generate all new colors
-  colors = generateRandomColorArr(num);
+  colors = generateRandomColorArr(numOfSquares);
   //pick a new random color from array
   pickedColor = pickColor(colors);
   //change colordisplay to match picked color
   colordisplay.textContent = pickedColor;
   //change colors of squares
   for (var i = 0; i < squares.length; i++) {
-    squares[i].style.backgroundColor = colors[i];
+
+    if (colors[i]) {
+      //if num of color array elements is 3, just display 3
+      //or it will diplay 6
+      squares[i].style.display = "block";
+      squares[i].style.backgroundColor = colors[i];
+    } else {
+      squares[i].style.display = "none"; //hide 3 squares
+    }
+
   }
+  h1.style.backgroundColor = "steelblue"; //body color
+  messageDisplay.textContent = "";
+  resetButton.textContent = "New Color";
 }
