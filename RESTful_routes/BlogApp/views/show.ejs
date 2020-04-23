@@ -1,0 +1,24 @@
+<%- include ("partial/header") %>
+
+<!-- segment gives us a border around the container -->
+<div class="ui main text container segment">
+	<div class="ui huge header"><%= blog.title %></div>
+	<div class="ui top attached "> 
+		<div class="item">
+			<img class="ui centered rounded image" src="<%= blog.image %>">
+			<div class="content">
+			<p><%= blog.created.toDateString() %></p>
+			</div>
+			<div class="description">
+				<!-- if use %- here, then blog.content will be run as code not just string -->
+				<p><%= blog.content %></p>
+			</div>
+			<a class="ui purple big inverted button" href="/blogs/<%= blog._id %>/edit">Edit</a>
+			<form id="delete" class="ui form" action="/blogs/<%= blog._id %>?_method=DELETE" method="POST">
+				<button class="ui red big inverted button" >Delete</button>
+			</form>				
+		</div>
+	</div>		
+</div>
+
+<%- include ("partial/footer") %>

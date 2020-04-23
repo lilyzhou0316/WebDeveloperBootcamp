@@ -1,0 +1,15 @@
+<!-- <link rel="stylesheet" type="text/css" href="/app.css"> -->
+<%- include ("partials/header") %>
+<h1>
+	Hello, <%= thingVar%>, welcome back to home page!
+	<% if(thingVar === 'lily'){%>
+		<p>
+			nice to see you again!<%=thingVar%>
+	</p>
+	<%}else{%>
+	<p>
+		who are you?
+	</p>
+	<%}%>
+</h1>
+<%- include ("partials/footer") %>
